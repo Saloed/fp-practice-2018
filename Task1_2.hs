@@ -61,10 +61,27 @@ isPrime x
 
 type Point2D = (Double, Double)
 
+multiply :: (Double, Double) -> Double
+multiply pair =
+ let (x, y) = pair in
+ x * y
+
+summation :: [Double] -> [Double] -> Double
+summation x y = sum(map multiply (zip x y))
+
 -- рассчитайте площадь многоугольника по формуле Гаусса
 -- многоугольник задан списком координат
 shapeArea :: [Point2D] -> Double
-shapeArea points = todo
+shapeArea points =
+    let
+      (firstX, firstY) = head(points)
+      (nX, nY) = last(points)
+      x = map fst points
+      y = map snd points
+      firstSum = summation x (tail y)
+      secondSum = summation (tail x) y
+    in
+    (firstSum + nX * firstY - secondSum - firstX * nY) / 2
 
 -- треугольник задан своими координатами.
 -- функция должна вернуть 
