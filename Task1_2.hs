@@ -2,35 +2,62 @@ module Task1_2 where
 
 import Todo(todo)
 
+import Prelude hiding (sin, cos, gcd)
+
+
+series f = [f(n) | n <- [0..]]
+
+sinFun x n =
+  let p = 2 * n + 1 in
+  ((-1) ** n) * (x ** p) / (product [1..p])
+
+cosFun x n =
+  let p = 2 * n in
+  ((-1) ** n) * (x ** p) / (product [1..p])
+
+sinSeries x = series (sinFun x)
+
+cosSeries x = series (cosFun x)
+
 -- синус числа (формула Тейлора)
 sin :: Double -> Double
-sin x = todo
+sin x = sum(take 100 (sinSeries x))
 
 -- косинус числа (формула Тейлора)
 cos :: Double -> Double
-cos x = todo
+cos x =  sum(take 100 (cosSeries x))
 
 -- наибольший общий делитель двух чисел
 gcd :: Integer -> Integer -> Integer
-gcd x y = todo
+gcd x y
+  | x == y = x
+  | x > y = gcd (x - y)  y
+  | x < y = gcd x (y - x)
 
 -- существует ли полный целочисленный квадрат в диапазоне [from, to)?
 doesSquareBetweenExist :: Integer -> Integer -> Bool
-doesSquareBetweenExist from to = todo
+doesSquareBetweenExist from to = ((floor (sqrt (fromIntegral (to - 1)))) - (ceiling (sqrt (fromIntegral from)))) >= 0
 
 -- является ли дата корректной с учётом количества дней в месяце и
 -- вискокосных годов?
 isDateCorrect :: Integer -> Integer -> Integer -> Bool
 isDateCorrect day month year = todo
 
+square x = x * x
+
 -- возведение числа в степень, duh
 -- готовые функции и плавающую арифметику использовать нельзя
 pow :: Integer -> Integer -> Integer
-pow x y = todo
+pow x y
+  | y == 0 = 1
+  | even y = pow (square x) (y `div` 2)
+  | otherwise = x * (pow (square x) ((y - 1) `div` 2))
 
 -- является ли данное число простым?
 isPrime :: Integer -> Bool
-isPrime x = todo
+isPrime x
+  | x == 1 = False
+  | otherwise = not (any (\i -> (x `mod` i) == 0) [2..floor(sqrt(fromIntegral x))])
 
 type Point2D = (Double, Double)
 
