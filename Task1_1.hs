@@ -46,23 +46,15 @@ simplify :: Term -> Term -> BinaryOperation -> Term
 simplify lhs rhs operation=
     let left = evaluate(lhs)
         right = evaluate(rhs)
-    in case (left, right) of
-        (IntConstant l, IntConstant r) -> case operation of
-            Plus -> IntConstant $ l + r
-            Minus -> IntConstant $ l - r
-            Times -> IntConstant $ l * r
-        (IntConstant 0, r ) -> case operation of
-            Plus -> r
-            Times -> IntConstant 0
-            _ -> BinaryTerm left right operation
-        (l, IntConstant 0 ) -> case operation of
-            Plus -> l
-            Minus -> l
-            Times -> IntConstant 0
-        (l, IntConstant 1 ) -> case operation of
-            Times -> l
-            _ -> BinaryTerm left right operation
-        (IntConstant 1, r ) -> case operation of
-            Times -> r
-            _ -> BinaryTerm left right operation
+    in case (left, right, operation) of
+        (IntConstant l, IntConstant r, Plus) -> IntConstant (l + r)
+        (IntConstant l, IntConstant r, Minus) -> IntConstant (l - r)
+        (IntConstant l, IntConstant r, Times) -> IntConstant (l * r)
+        (IntConstant 0, r , Plus) -> r
+        (IntConstant 0, r , Times) -> IntConstant 0
+        (IntConstant 1, r , Times) -> r
+        (l, IntConstant 0 , Plus) -> l
+        (l, IntConstant 0 , Minus) -> l
+        (l, IntConstant 0 , Times) -> IntConstant 0
+        (l, IntConstant 1 , Times) -> l
         _ -> BinaryTerm left right operation
