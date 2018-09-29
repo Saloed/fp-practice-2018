@@ -80,8 +80,9 @@ shapeArea points =
       y = map snd points
       firstSum = summation x (tail y)
       secondSum = summation (tail x) y
+      resultSum = firstSum + nX * firstY - secondSum - firstX * nY
     in
-    (firstSum + nX * firstY - secondSum - firstX * nY) / 2
+    (abs resultSum) / 2
 
 -- треугольник задан своими координатами.
 -- функция должна вернуть 
