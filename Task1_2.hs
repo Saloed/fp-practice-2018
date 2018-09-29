@@ -15,17 +15,39 @@ cosFun x n =
   let p = 2 * n in
   ((-1) ** n) * (x ** p) / (product [1..p])
 
-sinSeries x = series (sinFun x)
+halfPi = pi / 2
 
-cosSeries x = series (cosFun x)
+moduloHelper :: Double -> Double -> Double
+moduloHelper y m
+    | y > 0 && m >= y = 0
+    | y <= 0 && m <= y = 0
+    | y > 0 && m < 0 = if (y + m == y) then 0 else y + m
+    | y <= 0 && m > 0 = if (y + m == y) then 0 else y + m
+    | otherwise = m
+
+modulo :: Double -> Double -> Double
+modulo x 0 = x
+modulo x y = 
+  let m = x - y * (fromIntegral.floor) (x / y) in
+  moduloHelper y m
+
+sinBoundary :: Double -> Double
+sinBoundary x = (modulo (x + halfPi) (2*pi)) - halfPi
+
+cosBoundary :: Double -> Double
+cosBoundary x = modulo x (2 * pi)
+
+computeWithBoundArgument x fun boundary = 
+    let bounded = boundary x in 
+    sum (take 100 (series (fun bounded)))
 
 -- синус числа (формула Тейлора)
 sin :: Double -> Double
-sin x = sum(take 100 (sinSeries x))
+sin x = computeWithBoundArgument x sinFun sinBoundary
 
 -- косинус числа (формула Тейлора)
 cos :: Double -> Double
-cos x =  sum(take 100 (cosSeries x))
+cos x =  computeWithBoundArgument x cosFun cosBoundary
 
 -- наибольший общий делитель двух чисел
 gcd :: Integer -> Integer -> Integer
