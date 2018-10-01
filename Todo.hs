@@ -11,3 +11,5 @@ instance Show NotImplementedException where
 
 todo :: a
 todo = throw NotImplementedException
+
+data TodoType = TodoType
