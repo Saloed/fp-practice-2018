@@ -32,7 +32,7 @@ modulo x y =
   moduloHelper y m
 
 sinBoundary :: Double -> Double
-sinBoundary x = (modulo (x + halfPi) (2*pi)) - halfPi
+sinBoundary x = (modulo (x + halfPi) (2 * pi)) - halfPi
 
 cosBoundary :: Double -> Double
 cosBoundary x = modulo x (2 * pi)
@@ -79,7 +79,7 @@ pow x y
 isPrime :: Integer -> Bool
 isPrime x
   | x == 1 = False
-  | otherwise = not (any (\i -> (x `mod` i) == 0) [2..floor(sqrt(fromIntegral x))])
+  | otherwise = not (any (\i -> (x `mod` i) == 0) [2..(floor.sqrt.fromIntegral) x])
 
 type Point2D = (Double, Double)
 
@@ -89,7 +89,7 @@ multiply pair =
  x * y
 
 summation :: [Double] -> [Double] -> Double
-summation x y = sum(map multiply (zip x y))
+summation x y = sum (map multiply (zip x y))
 
 -- рассчитайте площадь многоугольника по формуле Гаусса
 -- многоугольник задан списком координат
