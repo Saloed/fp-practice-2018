@@ -54,9 +54,18 @@ remove i (Node left right nodeKey nodeValue)
     (Empty, right) -> right
     (left , right) -> fixNode left right
 
+checkNodes :: TreeMap v -> (Integer, v) -> Integer -> (Integer, v)
+checkNodes Empty current _ = current
+checkNodes right@(Node _ _ rKey _) current i | rKey > i  = current
+                                             | otherwise = nearestLE i right
+
 -- Поиск ближайшего снизу ключа относительно заданного
-nearestLE :: Integer -> TreeMap v -> (k, v)
-nearestLE i t = todo
+nearestLE :: Integer -> TreeMap v -> (Integer, v)
+nearestLE _ Empty = error "nle not found"
+nearestLE i (Node left right nodeKey nodeValue)
+  | nodeKey == i = (nodeKey, nodeValue)
+  | nodeKey > i  = nearestLE i left
+  | nodeKey < i  = checkNodes right (nodeKey, nodeValue) i
 
 -- Построение дерева из списка пар
 treeFromList :: [(Integer, v)] -> TreeMap v

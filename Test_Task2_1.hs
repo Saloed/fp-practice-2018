@@ -26,3 +26,7 @@ list_eq = lst == listFromTree new_tree
 
 ks = kMean 0 tree
 
+near = [nearestLE 5 tree,  nearestLE 9 tree, nearestLE 11 tree, nearestLE 31 tree]
+
+
+
