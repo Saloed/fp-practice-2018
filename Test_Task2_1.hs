@@ -29,4 +29,12 @@ ks = kMean 0 tree
 near = [nearestLE 5 tree,  nearestLE 9 tree, nearestLE 11 tree, nearestLE 31 tree]
 
 
+test_kmean' k value = let (key, _) = kMean k tree in key == value
+test_kmean =
+  [ test_kmean' 0 5
+  , test_kmean' 1 10
+  , test_kmean' 2 20
+  , test_kmean' 3 30
+  , test_kmean' 4 40
+  ]
 

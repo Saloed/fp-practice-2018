@@ -78,6 +78,14 @@ listFromTree (Node left right nodeKey nodeValue) =
   concat [listFromTree $ left, [(nodeKey, nodeValue)], listFromTree $ right]
 
 
+treeSize :: TreeMap v -> Integer
+treeSize Empty                 = 0
+treeSize (Node left right _ _) = (treeSize left) + 1 + (treeSize right)
+
 -- Поиск k-той порядковой статистики дерева 
 kMean :: Integer -> TreeMap v -> (Integer, v)
-kMean i t = (listFromTree t) !! (fromInteger i)
+kMean _ Empty = error "Empty tree"
+kMean i (Node left right key value) | leftSize == i = (key, value)
+                                    | leftSize > i  = kMean i left
+                                    | otherwise     = kMean (i - leftSize - 1) right
+  where leftSize = treeSize left
