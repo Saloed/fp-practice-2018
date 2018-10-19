@@ -61,9 +61,11 @@ nextDiagElem rowSize (idx, res) row
   | idx < rowSize = (idx + 1, (row !! idx : res))
   | otherwise     = (idx, res)
 
+elemCounter :: a -> Int -> Int
+elemCounter _ count = count + 1
+
 size :: [a] -> Int
-size []      = 0
-size (h : t) = 1 + size t
+size = foldr elemCounter 0
 
 -- Диагональ матрицы
 diagonal :: [[a]] -> [a]
