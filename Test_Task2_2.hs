@@ -24,6 +24,8 @@ b = [Just 1, Just 4, Nothing, Just 5, Nothing]
 test_catMaybes = catMaybes b
 
 mat = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+mat1 = [[1, 2, 3, 4], [5, 6, 7, 8]]
+mat2 = [[1, 2], [3, 4], [5, 6]]
 test_mat = diagonal mat
 
 test_present = elem 2 a

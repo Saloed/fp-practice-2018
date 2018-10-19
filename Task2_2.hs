@@ -56,12 +56,22 @@ getJustValue (Just v) = v
 catMaybes :: [Maybe a] -> [a]
 catMaybes list = (map getJustValue) $ (filter isJust) list
 
-nextDiagElem :: (Int, [a]) -> [a] -> (Int, [a])
-nextDiagElem (idx, res) row = (idx + 1, (row !! idx : res))
+nextDiagElem :: Int -> (Int, [a]) -> [a] -> (Int, [a])
+nextDiagElem rowSize (idx, res) row
+  | idx < rowSize = (idx + 1, (row !! idx : res))
+  | otherwise     = (idx, res)
+
+size :: [a] -> Int
+size []      = 0
+size (h : t) = 1 + size t
 
 -- Диагональ матрицы
 diagonal :: [[a]] -> [a]
-diagonal mat = reverse $ snd $ foldl nextDiagElem (0, []) mat
+diagonal [] = []
+diagonal mat =
+  let rowSize        = size $ head mat
+      diagElemGetter = nextDiagElem rowSize
+  in  reverse $ snd $ foldl diagElemGetter (0, []) mat
 
 -- Фильтр для всех элементов, не соответствующих предикату
 filterNot :: (a -> Bool) -> [a] -> [a]
@@ -90,11 +100,11 @@ append first second = foldr appendHelper second first
 grouper :: Integer -> ([[a]], Integer) -> a -> ([[a]], Integer)
 grouper _ ([], 0) elem = ([[elem]], 1)
 grouper chunkSize ((h : t), size) elem | size == chunkSize = ([elem] : h : t, 1)
-                                       | otherwise = ((append h [elem]) : t, size + 1)
+                                       | otherwise = ((elem : h) : t, size + 1)
 
 -- Разбиение списка lst на куски размером n
 -- (последний кусок может быть меньше)
 groups :: [a] -> Integer -> [[a]]
 groups lst n =
   let groupFn = (grouper n)
-  in  (reverse . fst) $ foldl groupFn ([], 0) (lst)
+  in  reverse . (map reverse) . fst $ foldl groupFn ([], 0) lst
