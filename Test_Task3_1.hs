@@ -26,3 +26,14 @@ test_nge = not (mfive > five)
 
 test_minus = five == (-mfive)
 test_mult = [five * five == 25, (-five) * five == (-25), five * (-five)  == (-25), (-five) * (-five)  == 25]
+
+range = [Zero .. five]
+
+test_div' a b =
+  let a'     = wpnFromInt a
+      b'     = wpnFromInt b
+      (q, r) = a' `divMod` b'
+  in  (toInteger $ q, toInteger $ r)
+
+
+test_div = [test_div' 17 3, test_div' 17 1]

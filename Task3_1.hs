@@ -78,6 +78,20 @@ succMultiply Zero        b = Zero
 succMultiply (Succ Zero) b = b
 succMultiply (Succ a   ) b = b + succMultiply a b
 
+succQuotRem
+  :: WeirdPeanoNumber
+  -> WeirdPeanoNumber
+  -> WeirdPeanoNumber
+  -> (WeirdPeanoNumber, WeirdPeanoNumber)
+succQuotRem a b q | a >= b    = succQuotRem (simplify (a - b)) b (Succ q)
+                  | otherwise = (q, a)
+
+succDivide
+  :: WeirdPeanoNumber
+  -> WeirdPeanoNumber
+  -> (WeirdPeanoNumber, WeirdPeanoNumber)
+succDivide a b = succQuotRem a b Zero
+
 multiply :: WeirdPeanoNumber -> WeirdPeanoNumber -> WeirdPeanoNumber
 multiply a b = case (signum a, signum b) of
   (0 , _ ) -> Zero
@@ -86,6 +100,28 @@ multiply a b = case (signum a, signum b) of
   (1 , -1) -> -(a `multiply` (-b))
   (-1, 1 ) -> -((-a) `multiply` b)
   (-1, -1) -> (-a) `multiply` (-b)
+
+negateQuot
+  :: (WeirdPeanoNumber, WeirdPeanoNumber)
+  -> (WeirdPeanoNumber, WeirdPeanoNumber)
+negateQuot (quot, rem) = (-quot, rem)
+
+negateRem
+  :: (WeirdPeanoNumber, WeirdPeanoNumber)
+  -> (WeirdPeanoNumber, WeirdPeanoNumber)
+negateRem (quot, rem) = (quot, -rem)
+
+divide
+  :: WeirdPeanoNumber
+  -> WeirdPeanoNumber
+  -> (WeirdPeanoNumber, WeirdPeanoNumber)
+divide a b = case (signum a, signum b) of
+  (0 , _ ) -> (Zero, Zero)
+  (_ , 0 ) -> error "Division by zero"
+  (1 , 1 ) -> a `succDivide` b
+  (1 , -1) -> negateQuot (a `divide` (-b))
+  (-1, 1 ) -> (negateQuot . negateRem) ((-a) `divide` b)
+  (-1, -1) -> negateRem $ (-a) `divide` (-b)
 
 instance Num WeirdPeanoNumber where
   (+) Zero     b = b
@@ -111,4 +147,20 @@ instance Num WeirdPeanoNumber where
   fromInteger i | i == 0 = Zero
                 | i < 0  = peanoFromSuccPred 0 (-i)
                 | i > 0  = peanoFromSuccPred i 0
+
+instance Enum WeirdPeanoNumber where
+    toEnum           =  fromInteger . toInteger
+    fromEnum         =  fromInteger . toInteger
+    succ x = Succ x
+    pred x = Pred x
+
+instance Real WeirdPeanoNumber where
+    toRational = toRational . toInteger
+
+instance Integral WeirdPeanoNumber where
+    toInteger Zero       = 0
+    toInteger (Succ wpn) = (toInteger wpn) + 1
+    toInteger (Pred wpn) = (toInteger wpn) - 1
+
+    quotRem first second = divide (simplify first) (simplify second)
 
