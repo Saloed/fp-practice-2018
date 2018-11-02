@@ -30,7 +30,12 @@ list2dlist' left (h: t) =
     in rec
 
 index :: DList a -> Int -> a
-index = todo
+index DNil _ = error "Empty list"
+index (DCons _ a right) i | i == 0 = a
+                          | otherwise = index right (i - 1)
+
+insertAt' (DCons left _ right) index value | index  == 0 = todo
+                                           | otherwise = insertAt' right (index - 1) value
 
 insertAt :: DList a -> Int -> a -> DList a
 insertAt list index value = todo
