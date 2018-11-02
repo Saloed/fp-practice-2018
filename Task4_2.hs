@@ -11,14 +11,15 @@ instance Functor FourOf where
 
 instance Applicative FourOf where
     pure a = FourOf a a a a
-    (<*>) (FourOf a1 b1 c1 d1) (FourOf a2 b2 c2 d2) = FourOf (a1 a2) (b1 b2) (c1 c2) (d1 d2)
+    (<*>) (FourOf a1 b1 c1 d1) (FourOf a2 b2 c2 d2) =
+        FourOf (a1 a2) (b1 b2) (c1 c2) (d1 d2)
+
 
 instance Monad FourOf where
     return a = FourOf a a a a
     (>>=) (FourOf a b c d) f = FourOf aa bb cc dd
-                               where (FourOf aa _ _ _) = f a
-                                     (FourOf _ bb _ _) = f b
-                                     (FourOf _ _ cc _) = f c
-                                     (FourOf _ _ _ dd) = f d
-
-
+        where
+        (FourOf aa _  _  _ ) = f a
+        (FourOf _  bb _  _ ) = f b
+        (FourOf _  _  cc _ ) = f c
+        (FourOf _  _  _  dd) = f d
