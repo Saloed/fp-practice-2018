@@ -30,10 +30,38 @@ list2dlist' left (h: t) =
     in rec
 
 index :: DList a -> Int -> a
-index = todo
+index DNil _ = error "Empty list"
+index (DCons _ a right) i | i == 0    = a
+                          | otherwise = index right (i - 1)
+
+updateLeft DNil          _    = DNil
+updateLeft (DCons _ v r) left = item
+ where
+  right = updateLeft r item
+  item  = DCons left v right
+
+
+insertAt' left DNil  0     value = DCons left value DNil
+insertAt' left DNil  index value = error "List too small"
+insertAt' left right 0     value = item
+ where
+  next = updateLeft right item
+  item = DCons left value next
+insertAt' left (DCons _ v r) index value = item
+ where
+  next = insertAt' item r (index - 1) value
+  item = DCons left v next
+
+removeAt' :: DList a -> DList a -> Int -> DList a
+removeAt' left DNil              index = error "List too small"
+removeAt' left (DCons _ _ right) 0     = updateLeft right left
+removeAt' left (DCons _ v right) index = item
+ where
+  next = removeAt' item right (index - 1)
+  item = DCons left v next
 
 insertAt :: DList a -> Int -> a -> DList a
-insertAt list index value = todo
+insertAt list index value = insertAt' DNil list index value
 
 removeAt :: DList a -> Int -> DList a
-removeAt list index = todo
+removeAt list index = removeAt' DNil list index
