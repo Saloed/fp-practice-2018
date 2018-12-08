@@ -21,3 +21,15 @@ check_tree (tree, elem) =
   in  (validate tree 0) && (all f inels) && (not $ f elem)
 
 test_remove = map check_tree (zip trees_without_elem list)
+
+left (Node _ l _ _) = l
+parent (Node p _ _ _) = p
+
+lt = left tree
+
+nlt = insert lt 12
+
+test_nlt = parent nlt
+
+
+

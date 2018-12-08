@@ -4,6 +4,12 @@ import Todo(todo)
 
 data LinkedTree a = Node (LinkedTree a) (LinkedTree a) (LinkedTree a) a | Empty
 
+
+instance (Eq a) => Eq (LinkedTree a) where
+  (==) Empty Empty = True
+  (==) (Node _ ll lr lv) (Node _ rl rr rv) = lv == rv && ll == rl && lr == rr
+  (==) _ _ = False
+
 -- declare BinTree a to be an instance of Show
 instance (Show a) => Show (LinkedTree a) where
  show t = "< " ++ replace '\n' "\n: " (treeshow "" t)
@@ -103,10 +109,43 @@ find (Node _ left right v) elem | elem == v = True
                                 | elem > v  = find right elem
                                 | elem < v  = find left elem
 
-insert :: (Ord a) => LinkedTree a -> a -> LinkedTree a
-insert = insert' Empty
 
+updateParentLeft :: (Eq a) => LinkedTree a -> LinkedTree a -> LinkedTree a -> LinkedTree a
+updateParentLeft Empty _    _   = Empty
+updateParentLeft currP@(Node parent left right value) prev new = newParent
+ where
+  newNodeParent = updateParent parent currP newParent
+  newRight      = replaceParent right newParent
+  newParent     = Node newNodeParent new newRight value
+
+updateParentRight :: (Eq a) => LinkedTree a -> LinkedTree a -> LinkedTree a -> LinkedTree a
+updateParentRight Empty _    _   = Empty
+updateParentRight currP@(Node parent left right value) prev new = newParent
+ where
+  newNodeParent = updateParent parent currP newParent
+  newLeft       = replaceParent left newParent
+  newParent     = Node newNodeParent newLeft new value
+
+updateParent :: (Eq a) =>  LinkedTree a -> LinkedTree a -> LinkedTree a -> LinkedTree a
+updateParent Empty _ _ = Empty
+updateParent currP@(Node _ left right _) prev new
+  | prev == left  = updateParentLeft currP prev new
+  | prev == right = updateParentRight currP prev new
+  | otherwise     = error "WTF???"
+
+
+insert :: (Ord a) => LinkedTree a -> a -> LinkedTree a
+insert Empty                    value = insert' Empty Empty value
+insert tree@(Node Empty  _ _ _) value = insert' Empty tree value
+insert tree@(Node parent _ _ _) value = node
+ where
+  node      = insert' newParent tree value
+  newParent = updateParent parent tree node
 
 remove :: (Ord a) => LinkedTree a -> a -> LinkedTree a
-remove Empty _    = Empty
-remove tree  elem = remove' Empty tree elem
+remove Empty                    _    = Empty
+remove tree@(Node Empty  _ _ _) elem = remove' Empty tree elem
+remove tree@(Node parent _ _ _) elem = node
+ where
+  node      = remove' newParent tree elem
+  newParent = updateParent parent tree node
