@@ -61,7 +61,10 @@ removeAt' left (DCons _ v right) index = item
   item = DCons left v next
 
 insertAt :: DList a -> Int -> a -> DList a
-insertAt list index value = insertAt' DNil list index value
+insertAt DNil                  index value = insertAt' DNil DNil index value
+insertAt list@(DCons left _ _) index value = insertAt' left list index value
+
 
 removeAt :: DList a -> Int -> DList a
-removeAt list index = removeAt' DNil list index
+removeAt DNil                  _     = error "List is empty"
+removeAt list@(DCons left _ _) index = removeAt' left list index

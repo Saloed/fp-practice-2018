@@ -22,6 +22,4 @@ y4 = insertAt y3 3 3
 y5 = insertAt y4 4 4
 y = y5
 
-
 removed = removeAt y 2
-
