@@ -60,11 +60,23 @@ removeAt' left (DCons _ v right) index = item
   next = removeAt' item right (index - 1)
   item = DCons left v next
 
+rebuildLeft :: DList a -> DList a -> DList a
+rebuildLeft DNil             _    = DNil
+rebuildLeft (DCons left v _) node = newItem
+ where
+  newItem = DCons prev v node
+  prev    = rebuildLeft left newItem
+
 insertAt :: DList a -> Int -> a -> DList a
 insertAt DNil                  index value = insertAt' DNil DNil index value
-insertAt list@(DCons left _ _) index value = insertAt' left list index value
-
+insertAt list@(DCons left _ _) index value = node
+ where
+  node = insertAt' lft list index value
+  lft  = rebuildLeft left node
 
 removeAt :: DList a -> Int -> DList a
 removeAt DNil                  _     = error "List is empty"
-removeAt list@(DCons left _ _) index = removeAt' left list index
+removeAt list@(DCons left _ _) index = node
+ where
+  node = removeAt' lft list index
+  lft  = rebuildLeft left node
